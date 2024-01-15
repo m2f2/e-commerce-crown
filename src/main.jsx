@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom"
 import App from './App.jsx'
 import { CartProvider } from './contexts/cart.context.jsx'
-import { ProductsProvider } from './contexts/products.context.jsx'
+import { CatagoriesProvider } from './contexts/catagories.context.jsx'
 import { UserProvider } from './contexts/user.context.jsx'
 import './index.scss'
 
@@ -12,11 +12,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <UserProvider>
-      <ProductsProvider>
+      <CatagoriesProvider>
         <CartProvider>
           <App/>
         </CartProvider>
-      </ProductsProvider>
+      </CatagoriesProvider>
       </UserProvider>
     </BrowserRouter>
   </React.StrictMode>
