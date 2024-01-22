@@ -1,17 +1,17 @@
-import { Fragment, useContext } from "react";
+import { Fragment} from "react";
 import { FaCrown } from "react-icons/fa6";
 import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CartDropDown from "../../components/cart-dropdown/cart-dropdown.component";
 import CartIcon from "../../components/crat-icon/cart-icon.component";
-import { CartContext } from "../../contexts/cart.context";
 import { signOutUser } from "../../utils/firebase/firebase";
+import {selectIsCartOpen} from '../../store/cart/cart.selector'
 import { selectCurrentUser } from "../../store/user/user.selector";
 import { LogoContainer, NavLink, NavLinks, NavigationComponent } from "./navigation.style";
 
 const Navigation = ()=>{
-  const currentUser =  useSelector(selectCurrentUser)
-  const {isCartOpen}=useContext(CartContext)
+  const currentUser =  useSelector(selectCurrentUser);
+  const isCartOpen = useSelector(selectIsCartOpen);
 
   return <Fragment>
     <NavigationComponent> 
@@ -37,3 +37,6 @@ const Navigation = ()=>{
 }
 
 export default Navigation;
+
+
+
