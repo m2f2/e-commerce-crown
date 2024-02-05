@@ -1,25 +1,20 @@
 import { useEffect } from 'react';
-import { createUserDocumentFromAuth, onAuthStateChangedListener } from "./utils/firebase/firebase";
 import { useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import Shop from "./routes/shop/shop.component";
+import Authentication from './routes/authentication/authentication.component';
+import Checkout from './routes/checkout/checkout.component';
 import Home from "./routes/home/home.component";
 import Navigation from './routes/navigation/navigation.component';
-import Checkout from './routes/checkout/checkout.component';
-import Authentication from './routes/authentication/authentication.component';
-import { setCurrentUser } from './store/user/user.action';
+import Shop from "./routes/shop/shop.component";
+import { checkUserSession } from './store/user/user.action';
+
+
 
 
 const App=() =>{
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
   useEffect(()=>{
-    const unsubscribe = onAuthStateChangedListener((user)=>{
-              if(user){
-                        createUserDocumentFromAuth(user);
-              }
-              dispatch(setCurrentUser(user));
-    })
-    return unsubscribe;
+    dispatch(checkUserSession())
 },[])
 
   return (
@@ -30,7 +25,6 @@ const App=() =>{
       <Route path='auth' element={<Authentication/>}/>
       <Route path='checkout' element={<Checkout/>}/>
     </Route>
-    {/* <Route path='home'  element={<Home/>}/> */}
    </Routes>
   )
 }

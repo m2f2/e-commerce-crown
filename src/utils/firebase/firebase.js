@@ -1,12 +1,14 @@
 import { initializeApp } from "firebase/app";
-import { GoogleAuthProvider, 
+import {
+  GoogleAuthProvider,
   createUserWithEmailAndPassword,
-  getAuth, signInWithEmailAndPassword, 
-  signInWithPopup, signInWithRedirect, 
-  signOut, 
-  onAuthStateChanged
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup, signInWithRedirect,
+  signOut
 } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc, collection, writeBatch, query, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, writeBatch } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,8 +24,9 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 const googleProvider = new GoogleAuthProvider();
+
 googleProvider.setCustomParameters({
-          prompt: "select_account"
+  prompt: "select_account"
 })
 
 
@@ -34,7 +37,7 @@ export const signInWithGoogleRedirect  = ()=> signInWithRedirect(auth, googlePro
 
 export const db = getFirestore();
 
-export const  addCollectionAndDocuments = async (collectionKey, objectToAdd)=>{
+export const  addCollectionAndDocuments = async (collectionKey, objectToAdd, field)=>{
   const collectionRef = collection(db, collectionKey);
   const batch = writeBatch(db);
   
@@ -55,30 +58,21 @@ export const getCategoriesAndDocuments = async ()=>{
 return querySnapshot.docs.map((docSnapshot)=>docSnapshot.data());
 }
 
-export const createUserDocumentFromAuth = async(userAuth, additionalInformation)=>{
+export const createUserDocumentFromAuth = async(userAuth, additionalInformation={})=>{
   if (!userAuth) return;
   const userDocRef = doc(db, "user", userAuth.uid);
-  console.log(userDocRef);
-
   const userSnapshot = await getDoc(userDocRef);
-  console.log(userSnapshot);
-  console.log(userSnapshot.exists());
-
   if(!userSnapshot.exists()){
     const {displayName, email} = userAuth;
     const createdAt = new Date();
-
       try{
         await setDoc(userDocRef,{displayName,email,createdAt, ...additionalInformation={}})
       }
       catch(e){
-        console.log('error creating the user',e);
+        console.log('error creating the user',e.message);
       }
   }
-
- 
-
-  return userDocRef;
+  return userSnapshot;
 }
 
 
@@ -95,3 +89,17 @@ export const signOutUser = async ()=> await signOut(auth)
 
 
 export const onAuthStateChangedListener = (callback)=> onAuthStateChanged(auth, callback)
+
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (userAuth) => {
+        unsubscribe();
+        resolve(userAuth);
+      },
+      reject
+    );
+  });
+};
